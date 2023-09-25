@@ -20,3 +20,16 @@ def chatgpt_response(prompt):
     except Exception as e:
         print(e)
         return str(e)
+
+def dalle_response(prompt):
+    try:
+        response = openai.Image.create(
+            prompt = prompt,
+            n = 1,
+            size = '512x512'
+        )
+        return response['data'][0]['url']
+    except Exception as e:
+        print(e)
+        return str(e)
+

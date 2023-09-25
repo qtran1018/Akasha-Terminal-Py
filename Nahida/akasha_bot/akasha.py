@@ -1,7 +1,8 @@
 from dotenv import load_dotenv
 import discord
 import os
-from Nahida.chatgpt.openai import chatgpt_response
+import asyncio
+from Nahida.chatgpt.openai import chatgpt_response, dalle_response
 from Nahida.yts.ytsummary import getTranscription
 
 load_dotenv()
@@ -18,26 +19,33 @@ class Client(discord.Client):
         userMessage = None
         if message.author == self.user:
             return
-        
+#--------------------------------------------------------------------------        
         if message.content == 'ping':
             await message.channel.send('pong')
-
+#--------------------------------------------------------------------------
         if message.content.startswith('!gpt'):
-            userMessage = message.content.replace('!gpt', '')
-            #print(userMessage)
-            akasha_response = chatgpt_response(userMessage)
-            await message.reply(akasha_response)
-        
+            async with message.channel.typing():
+                userMessage = message.content.replace('!gpt', '')
+                #print(userMessage)
+                akasha_response = chatgpt_response(userMessage)
+                await message.reply(akasha_response)
+#--------------------------------------------------------------------------        
         if message.content.startswith('!yts'):
+            async with message.channel.typing():
+                userMessage = message.content.replace('!yts', '')
+                transcript = getTranscription(userMessage)
 
-            userMessage = message.content.replace('!yts', '')
-            transcript = getTranscription(userMessage)
-
-            #print(userMessage)
-            prompt = "Summarize this video: "
-            sentMessage = str(prompt + transcript)
-            akasha_response = chatgpt_response(sentMessage)
-            await message.reply(akasha_response)
+                #print(userMessage)
+                prompt = "Summarize this video: "
+                sentMessage = str(prompt + transcript)
+                akasha_response = chatgpt_response(sentMessage)
+                await message.reply(akasha_response)
+#--------------------------------------------------------------------------
+        if message.content.startswith('!dalle2'):
+            async with message.channel.typing():
+                userMessage = message.content.replace('!dalle2','')
+                akasha_response = dalle_response(userMessage)
+                await message.reply(akasha_response)
 
 intents = discord.Intents.all()
 intents.message_content = True
