@@ -18,9 +18,7 @@ def getTranscription(url):
     else:
         print("Please use a valid youtube video link.")
         exit()
-
-    print(subURL)
-
+        
     try:
         # Gets video transcript from input URL.
         srt = YouTubeTranscriptApi.get_transcript(subURL) 
@@ -32,6 +30,5 @@ def getTranscription(url):
     except Exception as e:
         transcript = "Send this message back to me:" + str(e)
         print("Error occurred.", e)
-    #print("\n"+transcript)
     transcript.replace("[Music]","")
     return transcript
